@@ -1,0 +1,395 @@
+import type { Agent, Task, LogEntry, Notification, AnalyticsData, WorkflowNode, WorkflowEdge } from '../types';
+
+// ===== 10 Sample AI Agents =====
+
+export const mockAgents: Agent[] = [
+  {
+    id: 'agent-001',
+    name: 'NeuralCore GPT-4o',
+    model: 'GPT-4o',
+    status: 'online',
+    avatar: '🤖',
+    description: 'General-purpose reasoning and code generation agent with advanced tool use capabilities.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 2).toISOString(),
+    successRate: 97.3,
+    tasksCompleted: 1842,
+    tasksFailed: 50,
+    totalApiCalls: 28340,
+    totalTokens: 4520000,
+    avgResponseTime: 1.2,
+    tags: ['reasoning', 'code', 'tool-use'],
+    version: 'v4.0.1',
+    region: 'us-east-1',
+    cpuUsage: 62,
+    memoryUsage: 71,
+    uptime: 99.8,
+    currentTask: {
+      id: 'task-c01',
+      agentId: 'agent-001',
+      title: 'Refactor authentication module',
+      description: 'Analyze and refactor the legacy OAuth2 authentication flow',
+      status: 'running',
+      startTime: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+      tokensUsed: 8400,
+      apiCalls: 14,
+    },
+  },
+  {
+    id: 'agent-002',
+    name: 'ClaudeOps 3.5 Sonnet',
+    model: 'Claude-3.5-Sonnet',
+    status: 'busy',
+    avatar: '🧠',
+    description: 'Advanced analytical agent specialized in long-context reasoning and document synthesis.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 1).toISOString(),
+    successRate: 98.7,
+    tasksCompleted: 2310,
+    tasksFailed: 30,
+    totalApiCalls: 31200,
+    totalTokens: 6900000,
+    avgResponseTime: 1.8,
+    tags: ['analysis', 'documents', 'long-context'],
+    version: 'v3.5.2',
+    region: 'eu-west-1',
+    cpuUsage: 88,
+    memoryUsage: 82,
+    uptime: 99.5,
+    currentTask: {
+      id: 'task-c02',
+      agentId: 'agent-002',
+      title: 'Synthesize Q2 reports',
+      description: 'Aggregate and synthesize 240 pages of quarterly financial data',
+      status: 'running',
+      startTime: new Date(Date.now() - 1000 * 60 * 38).toISOString(),
+      tokensUsed: 52000,
+      apiCalls: 42,
+    },
+  },
+  {
+    id: 'agent-003',
+    name: 'GeminiFlux Pro',
+    model: 'Gemini-1.5-Pro',
+    status: 'online',
+    avatar: '✨',
+    description: 'Multimodal agent for vision, code, and structured data analysis tasks.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+    successRate: 95.1,
+    tasksCompleted: 1105,
+    tasksFailed: 57,
+    totalApiCalls: 17600,
+    totalTokens: 3100000,
+    avgResponseTime: 2.1,
+    tags: ['multimodal', 'vision', 'data'],
+    version: 'v1.5.0',
+    region: 'us-west-2',
+    cpuUsage: 41,
+    memoryUsage: 55,
+    uptime: 97.9,
+  },
+  {
+    id: 'agent-004',
+    name: 'LlamaGuard 3.1',
+    model: 'Llama-3.1-70B',
+    status: 'offline',
+    avatar: '🦙',
+    description: 'Open-source privacy-first agent running on-premise for sensitive data pipelines.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+    successRate: 91.2,
+    tasksCompleted: 680,
+    tasksFailed: 65,
+    totalApiCalls: 9800,
+    totalTokens: 2200000,
+    avgResponseTime: 3.4,
+    tags: ['on-premise', 'privacy', 'open-source'],
+    version: 'v3.1.0',
+    region: 'on-premise',
+    cpuUsage: 0,
+    memoryUsage: 0,
+    uptime: 84.2,
+  },
+  {
+    id: 'agent-005',
+    name: 'MistralOps 8x7B',
+    model: 'Mixtral-8x7B',
+    status: 'online',
+    avatar: '⚡',
+    description: 'High-throughput MoE agent optimized for low-latency classification and routing.',
+    lastActive: new Date(Date.now() - 1000 * 30).toISOString(),
+    successRate: 93.8,
+    tasksCompleted: 4210,
+    tasksFailed: 272,
+    totalApiCalls: 55400,
+    totalTokens: 8800000,
+    avgResponseTime: 0.6,
+    tags: ['fast', 'classification', 'routing'],
+    version: 'v8.7.1',
+    region: 'ap-southeast-1',
+    cpuUsage: 35,
+    memoryUsage: 44,
+    uptime: 99.9,
+  },
+  {
+    id: 'agent-006',
+    name: 'PhiCraft 3 Mini',
+    model: 'Phi-3-Mini',
+    status: 'busy',
+    avatar: '🔬',
+    description: 'Small but mighty edge agent for IoT data processing and embedded system logs.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 3).toISOString(),
+    successRate: 89.4,
+    tasksCompleted: 3100,
+    tasksFailed: 368,
+    totalApiCalls: 41000,
+    totalTokens: 1900000,
+    avgResponseTime: 0.3,
+    tags: ['edge', 'iot', 'embedded'],
+    version: 'v3.0.1',
+    region: 'edge-cluster',
+    cpuUsage: 92,
+    memoryUsage: 61,
+    uptime: 96.1,
+    currentTask: {
+      id: 'task-c06',
+      agentId: 'agent-006',
+      title: 'Process sensor stream #7',
+      description: 'Real-time classification of factory floor sensor telemetry',
+      status: 'running',
+      startTime: new Date(Date.now() - 1000 * 60 * 7).toISOString(),
+      tokensUsed: 1200,
+      apiCalls: 320,
+    },
+  },
+  {
+    id: 'agent-007',
+    name: 'CodexPilot X',
+    model: 'Codex-002',
+    status: 'online',
+    avatar: '💻',
+    description: 'Specialized code generation and review agent integrated with CI/CD pipelines.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
+    successRate: 96.5,
+    tasksCompleted: 2890,
+    tasksFailed: 101,
+    totalApiCalls: 38100,
+    totalTokens: 7200000,
+    avgResponseTime: 1.5,
+    tags: ['code-gen', 'cicd', 'review'],
+    version: 'v2.0.2',
+    region: 'us-east-2',
+    cpuUsage: 54,
+    memoryUsage: 68,
+    uptime: 99.1,
+  },
+  {
+    id: 'agent-008',
+    name: 'WhisperNet STT',
+    model: 'Whisper-Large-v3',
+    status: 'online',
+    avatar: '🎙️',
+    description: 'Speech-to-text transcription agent for real-time meeting notes and call analytics.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    successRate: 99.1,
+    tasksCompleted: 6540,
+    tasksFailed: 58,
+    totalApiCalls: 6700,
+    totalTokens: 890000,
+    avgResponseTime: 4.2,
+    tags: ['audio', 'transcription', 'speech'],
+    version: 'v3.0.0',
+    region: 'us-west-1',
+    cpuUsage: 28,
+    memoryUsage: 39,
+    uptime: 99.7,
+  },
+  {
+    id: 'agent-009',
+    name: 'DallEVision 3',
+    model: 'DALL-E-3',
+    status: 'busy',
+    avatar: '🎨',
+    description: 'Creative image generation and editing agent for marketing content pipelines.',
+    lastActive: new Date(Date.now() - 1000 * 60 * 4).toISOString(),
+    successRate: 94.0,
+    tasksCompleted: 1870,
+    tasksFailed: 119,
+    totalApiCalls: 1900,
+    totalTokens: 2100000,
+    avgResponseTime: 8.9,
+    tags: ['image-gen', 'creative', 'marketing'],
+    version: 'v3.0.1',
+    region: 'eu-central-1',
+    cpuUsage: 79,
+    memoryUsage: 85,
+    uptime: 97.3,
+    currentTask: {
+      id: 'task-c09',
+      agentId: 'agent-009',
+      title: 'Generate campaign assets',
+      description: 'Create 24 product images for the summer 2026 campaign',
+      status: 'running',
+      startTime: new Date(Date.now() - 1000 * 60 * 22).toISOString(),
+      tokensUsed: 31000,
+      apiCalls: 18,
+    },
+  },
+  {
+    id: 'agent-010',
+    name: 'EmbedSync v3',
+    model: 'text-embedding-3-large',
+    status: 'online',
+    avatar: '🔗',
+    description: 'High-throughput embedding agent powering semantic search and RAG pipelines.',
+    lastActive: new Date(Date.now() - 1000 * 10).toISOString(),
+    successRate: 99.9,
+    tasksCompleted: 18200,
+    tasksFailed: 18,
+    totalApiCalls: 182000,
+    totalTokens: 920000000,
+    avgResponseTime: 0.1,
+    tags: ['embeddings', 'search', 'rag'],
+    version: 'v3.0.0',
+    region: 'multi-region',
+    cpuUsage: 45,
+    memoryUsage: 52,
+    uptime: 99.99,
+  },
+];
+
+// ===== Task History =====
+
+const taskTitles = [
+  'Summarize research paper', 'Debug production error', 'Generate SQL migration',
+  'Classify customer feedback', 'Extract invoice data', 'Code review PR #284',
+  'Translate technical docs', 'Optimize database query', 'Build unit tests',
+  'Analyze A/B test results', 'Generate API documentation', 'Process webhook batch',
+];
+
+export const mockTasks: Task[] = Array.from({ length: 80 }, (_, i) => {
+  const agentId = mockAgents[i % mockAgents.length].id;
+  const statuses: Task['status'][] = ['completed', 'completed', 'completed', 'failed', 'running', 'queued'];
+  const status = statuses[i % statuses.length];
+  const start = new Date(Date.now() - 1000 * 60 * 60 * (i * 2 + Math.random() * 5));
+  const duration = Math.floor(Math.random() * 180 + 10);
+  return {
+    id: `task-${String(i + 1).padStart(3, '0')}`,
+    agentId,
+    title: taskTitles[i % taskTitles.length],
+    description: 'Automated task dispatched by orchestrator pipeline',
+    status,
+    startTime: start.toISOString(),
+    endTime: status !== 'running' && status !== 'queued'
+      ? new Date(start.getTime() + duration * 1000).toISOString()
+      : undefined,
+    duration: status !== 'running' && status !== 'queued' ? duration : undefined,
+    tokensUsed: Math.floor(Math.random() * 20000 + 500),
+    apiCalls: Math.floor(Math.random() * 50 + 1),
+    errorMessage: status === 'failed' ? 'RateLimitError: Too many requests. Retry after 60s' : undefined,
+  };
+});
+
+// ===== Log Entries =====
+
+const logMessages: Record<LogEntry['level'], string[]> = {
+  info: [
+    'Task dispatched to agent queue',
+    'API response received in 1.2s',
+    'Context window: 12,400 / 128,000 tokens',
+    'Tool call: search_web() invoked',
+    'Streaming response initiated',
+    'Memory retrieval: 3 relevant chunks found',
+  ],
+  debug: [
+    'Serializing prompt template v2.1',
+    'Checkpoint saved: step 14/60',
+    'Cache hit: embedding retrieved from store',
+    'Retry attempt 1/3 for failed request',
+  ],
+  warn: [
+    'Token usage at 78% of context limit',
+    'Response latency spike: 4.8s (threshold: 3s)',
+    'Rate limit approaching: 85% of quota used',
+    'Memory pressure high: 82% utilization',
+  ],
+  error: [
+    'RateLimitError: 429 Too Many Requests',
+    'Timeout after 30s waiting for tool response',
+    'JSON parse failed: unexpected token at position 0',
+    'Function call schema validation error',
+  ],
+  success: [
+    'Task completed successfully in 23.4s',
+    'Output validated and dispatched to sink',
+    'Evaluation score: 0.94 / 1.00',
+    'Pipeline stage completed: 3/3 steps done',
+  ],
+};
+
+export const mockLogs: LogEntry[] = Array.from({ length: 200 }, (_, i) => {
+  const levels: LogEntry['level'][] = ['info', 'info', 'info', 'debug', 'warn', 'error', 'success'];
+  const level = levels[i % levels.length];
+  const messages = logMessages[level];
+  const agentId = mockAgents[i % mockAgents.length].id;
+  return {
+    id: `log-${String(i + 1).padStart(4, '0')}`,
+    agentId,
+    timestamp: new Date(Date.now() - 1000 * 60 * i * 3).toISOString(),
+    level,
+    message: messages[i % messages.length],
+    metadata: i % 5 === 0 ? { traceId: `tr_${Math.random().toString(36).slice(2, 10)}`, latency: `${(Math.random() * 4 + 0.5).toFixed(2)}s` } : undefined,
+  };
+});
+
+// ===== Notifications =====
+
+export const mockNotifications: Notification[] = [
+  { id: 'n-001', agentId: 'agent-004', agentName: 'LlamaGuard 3.1', title: 'Agent Offline', message: 'LlamaGuard 3.1 has gone offline unexpectedly. Health check failed 3 consecutive times.', severity: 'error', timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), read: false, type: 'failure' },
+  { id: 'n-002', agentId: 'agent-002', agentName: 'ClaudeOps 3.5', title: 'High Token Usage', message: 'ClaudeOps has consumed 85% of daily token budget. Current: 52,000 / 60,000 tokens.', severity: 'warning', timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(), read: false, type: 'warning' },
+  { id: 'n-003', agentId: 'agent-007', agentName: 'CodexPilot X', title: 'Task Completed', message: 'Code review for PR #284 completed successfully. 3 issues found, 1 critical.', severity: 'success', timestamp: new Date(Date.now() - 1000 * 60 * 18).toISOString(), read: false, type: 'completion' },
+  { id: 'n-004', agentId: 'agent-006', agentName: 'PhiCraft 3', title: 'CPU Throttling', message: 'PhiCraft 3 Mini CPU usage at 92%. Tasks may experience degraded performance.', severity: 'warning', timestamp: new Date(Date.now() - 1000 * 60 * 31).toISOString(), read: true, type: 'warning' },
+  { id: 'n-005', agentId: 'agent-001', agentName: 'NeuralCore GPT-4o', title: 'API Rate Limit', message: 'NeuralCore hit OpenAI rate limit (429). Auto-retry queued with 60s backoff.', severity: 'error', timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(), read: true, type: 'failure' },
+  { id: 'n-006', agentId: 'agent-010', agentName: 'EmbedSync v3', title: 'Batch Complete', message: 'Embedding batch of 10,000 documents processed. 99.98% success rate.', severity: 'success', timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(), read: true, type: 'completion' },
+  { id: 'n-007', agentId: 'agent-009', agentName: 'DallEVision 3', title: 'Image Generation Failed', message: 'Content policy violation on 2 of 24 prompts. Manual review required.', severity: 'warning', timestamp: new Date(Date.now() - 1000 * 60 * 75).toISOString(), read: true, type: 'warning' },
+  { id: 'n-008', title: 'System Update', message: 'Dashboard v2.4.1 deployed. New workflow visualization and CSV export features added.', severity: 'info', timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(), read: true, type: 'info' },
+];
+
+// ===== Analytics Data (30 days) =====
+
+export const mockAnalytics: AnalyticsData[] = Array.from({ length: 30 }, (_, i) => {
+  const date = new Date(Date.now() - 1000 * 60 * 60 * 24 * (29 - i));
+  const base = 1 + Math.sin(i * 0.3) * 0.3;
+  return {
+    date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    tokens: Math.floor(base * 420000 + Math.random() * 80000),
+    apiCalls: Math.floor(base * 2800 + Math.random() * 500),
+    tasksCompleted: Math.floor(base * 180 + Math.random() * 40),
+    tasksFailed: Math.floor(base * 8 + Math.random() * 6),
+    avgResponseTime: parseFloat((base * 1.8 + Math.random() * 0.8).toFixed(2)),
+    cost: parseFloat((base * 42 + Math.random() * 8).toFixed(2)),
+  };
+});
+
+// ===== Workflow Graph =====
+
+export const workflowNodes: WorkflowNode[] = [
+  { id: 'wn-orchestrator', agentId: 'agent-001', x: 400, y: 80, label: 'Orchestrator' },
+  { id: 'wn-planner', agentId: 'agent-002', x: 200, y: 220, label: 'Planner' },
+  { id: 'wn-executor', agentId: 'agent-007', x: 600, y: 220, label: 'Code Exec' },
+  { id: 'wn-retriever', agentId: 'agent-010', x: 100, y: 370, label: 'Retriever' },
+  { id: 'wn-analyzer', agentId: 'agent-003', x: 320, y: 370, label: 'Analyzer' },
+  { id: 'wn-writer', agentId: 'agent-005', x: 520, y: 370, label: 'Writer' },
+  { id: 'wn-validator', agentId: 'agent-008', x: 700, y: 370, label: 'Validator' },
+  { id: 'wn-output', agentId: 'agent-006', x: 400, y: 500, label: 'Output' },
+];
+
+export const workflowEdges: WorkflowEdge[] = [
+  { id: 'we-01', source: 'wn-orchestrator', target: 'wn-planner', label: 'plan', animated: true, dataFlow: 1200 },
+  { id: 'we-02', source: 'wn-orchestrator', target: 'wn-executor', label: 'execute', animated: true, dataFlow: 3400 },
+  { id: 'we-03', source: 'wn-planner', target: 'wn-retriever', label: 'fetch', animated: true, dataFlow: 800 },
+  { id: 'we-04', source: 'wn-planner', target: 'wn-analyzer', label: 'analyze', animated: false, dataFlow: 650 },
+  { id: 'we-05', source: 'wn-executor', target: 'wn-writer', label: 'write', animated: true, dataFlow: 2100 },
+  { id: 'we-06', source: 'wn-executor', target: 'wn-validator', label: 'validate', animated: false, dataFlow: 980 },
+  { id: 'we-07', source: 'wn-retriever', target: 'wn-output', label: 'send', animated: false, dataFlow: 420 },
+  { id: 'we-08', source: 'wn-analyzer', target: 'wn-output', label: 'send', animated: true, dataFlow: 560 },
+  { id: 'we-09', source: 'wn-writer', target: 'wn-output', label: 'send', animated: false, dataFlow: 1800 },
+  { id: 'we-10', source: 'wn-validator', target: 'wn-output', label: 'approve', animated: true, dataFlow: 340 },
+];
